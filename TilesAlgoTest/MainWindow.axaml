@@ -1,0 +1,13 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TilesAlgoTest.MainWindow"
+        Title="TilesAlgoTest">
+  <Grid>
+    <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Reset" Click="Button_Click"/>
+    <Canvas x:Name="TilesLayout" Margin="12" Width="336" HorizontalAlignment="Center">
+    </Canvas>
+  </Grid>
+</Window>
