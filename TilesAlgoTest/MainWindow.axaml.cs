@@ -179,9 +179,9 @@ namespace TilesAlgoTest {
                 tile.Column = x;
                 tile.Row = y;
 
-                Tile interscectTile = SampleTiles.Where(t => t.Row == y).FirstOrDefault();
-                if (interscectTile != null) { 
-                    int index = SampleTiles.IndexOf(interscectTile);
+                Tile firstInRowTile = SampleTiles.Where(t => t.Row == y).FirstOrDefault();
+                if (firstInRowTile != null) { 
+                    int index = SampleTiles.IndexOf(firstInRowTile);
                     SampleTiles.Remove(tile);
                     SampleTiles.Insert(index, tile);
                 }
