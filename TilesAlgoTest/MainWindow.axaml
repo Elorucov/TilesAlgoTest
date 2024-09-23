@@ -3,8 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="1280" Height="720"
         x:Class="TilesAlgoTest.MainWindow"
-        Title="TilesAlgoTest">
+        Title="Tiles UI demo by Elchin Orujov">
   <Grid>
     <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Reset" Click="Button_Click"/>
     <Canvas x:Name="TilesLayout" Margin="12" Width="336" DragDrop.AllowDrop="True" HorizontalAlignment="Center">
