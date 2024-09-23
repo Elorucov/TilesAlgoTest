@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using System;
@@ -50,8 +51,8 @@ namespace TilesAlgoTest {
                 Rect trect = tile.Rect;
                 List<Rect> rects = SampleTiles.Take(i).Select(t => t.Rect).ToList();
                 foreach (Rect rect in CollectionsMarshal.AsSpan(rects)) {
-                    var intersect = trect.Intersect(rect);
-                    if (intersect.Height >= 1) { // If tile (trect) have a collision, move it under (rect)
+                    bool intersects = trect.Intersects(rect);
+                    if (intersects) { // If tile (trect) have a collision, move it under (rect)
                         int add = Convert.ToInt32(rect.Height + rect.Top - trect.Top);
                         tile.Row += add;
                         extra += add;
@@ -122,7 +123,7 @@ namespace TilesAlgoTest {
                         Width = width,
                         Height = height,
                         Child = new Border {
-                            Background = new SolidColorBrush(Colors.MediumPurple),
+                            Background = new SolidColorBrush(Color.FromArgb(224, 0, 122, 204)),
                             HorizontalAlignment = HorizontalAlignment.Stretch,
                             VerticalAlignment = VerticalAlignment.Stretch,
                             Child = new TextBlock {
@@ -136,11 +137,68 @@ namespace TilesAlgoTest {
                     Canvas.SetLeft(b, left);
                     Canvas.SetTop(b, top);
 
-                    TilesLayout.Children.Add(b);
-
                     b.ContextRequested += TileContextRequested;
+                    b.PointerPressed += TilePointerPressed;
+                    b.PointerReleased += TilePointerReleased;
+
+                    TilesLayout.Children.Add(b);
                 }
             }
+        }
+
+        Point dragStartPos;
+        Point tileStartPos;
+
+        private void TilePointerPressed(object sender, PointerPressedEventArgs e) {
+            Border b = sender as Border;
+            dragStartPos = e.GetCurrentPoint(TilesLayout).Position;
+            tileStartPos = new Point(Canvas.GetLeft(b), Canvas.GetTop(b));
+
+            b.PointerMoved += TilePointerMoved;
+        }
+
+        private void TilePointerReleased(object sender, PointerReleasedEventArgs e) {
+            Border b = sender as Border;
+            b.PointerMoved -= TilePointerMoved;
+
+            // Convert UI position to tile position
+            double smallTileSize = tilesLayoutWidth / column;
+
+            double ux = Canvas.GetLeft(b);
+            double uy = Canvas.GetTop(b);
+
+            double tx = ux / smallTileSize;
+            double ty = uy / smallTileSize;
+
+            int x = Convert.ToInt32(Math.Round(tx));
+            int y = Convert.ToInt32(Math.Round(ty));
+
+            Tile associatedTile = b.DataContext as Tile;
+            Tile tile = SampleTiles.Where(t => t.Id == associatedTile.Id).FirstOrDefault();
+            if (tile != null) {
+                tile.Column = x;
+                tile.Row = y;
+
+                Tile interscectTile = SampleTiles.Where(t => t.Column == x && t.Row == y).FirstOrDefault();
+                if (interscectTile != null) { 
+                    int index = SampleTiles.IndexOf(interscectTile);
+                    SampleTiles.Remove(tile);
+                    SampleTiles.Insert(index, tile);
+                }
+            }
+            Test();
+        }
+
+        private void TilePointerMoved(object sender, PointerEventArgs e) {
+            Border b = sender as Border;
+            double smallTileSize = tilesLayoutWidth / column;
+
+            var currentPos = e.GetCurrentPoint(TilesLayout).Position;
+            var moved = currentPos - dragStartPos;
+            double x = tileStartPos.X + moved.X;
+            double y = tileStartPos.Y + moved.Y;
+            if (x >= 0 && x <= tilesLayoutWidth - smallTileSize) Canvas.SetLeft(b, x);
+            if (y >= 0) Canvas.SetTop(b, y);
         }
 
         private void TileContextRequested(object sender, ContextRequestedEventArgs e) {

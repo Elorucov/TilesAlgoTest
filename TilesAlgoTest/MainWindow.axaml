@@ -7,7 +7,7 @@
         Title="TilesAlgoTest">
   <Grid>
     <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Reset" Click="Button_Click"/>
-    <Canvas x:Name="TilesLayout" Margin="12" Width="336" HorizontalAlignment="Center">
+    <Canvas x:Name="TilesLayout" Margin="12" Width="336" DragDrop.AllowDrop="True" HorizontalAlignment="Center">
     </Canvas>
   </Grid>
 </Window>
